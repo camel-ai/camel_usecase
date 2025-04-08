@@ -21,8 +21,8 @@ import time
 import traceback
 
 # 导入主题生成和对话生成模块
-from topic_generator import generate_topics, save_topics
-from roleplay_dialogue_generator import generate_dialogue, save_dialogue, load_topics_from_file
+from llama4_data_gen.topic_generator import generate_topics, save_topics
+from llama4_data_gen.roleplay_dialogue_generator import generate_dialogue, save_dialogue, load_topics_from_file
 
 # 导入CAMEL相关模块
 from camel.configs import OpenRouterConfig

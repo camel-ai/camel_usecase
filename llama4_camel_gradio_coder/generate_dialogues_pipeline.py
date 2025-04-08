@@ -18,8 +18,8 @@ import subprocess
 from colorama import Fore, init
 
 # 导入主题生成和对话生成模块
-from topic_generator import generate_topics, load_input_file, save_topics
-from roleplay_dialogue_generator import generate_dialogue, save_dialogue
+from llama4_data_gen.topic_generator import generate_topics, load_input_file, save_topics
+from llama4_data_gen.roleplay_dialogue_generator import generate_dialogue, save_dialogue
 
 
 def main():
@@ -77,7 +77,7 @@ def main():
     # 步骤2：生成对话
     print(Fore.YELLOW + "\n步骤2：生成对话")
     # 加载主题
-    from roleplay_dialogue_generator import load_topics_from_file
+    from llama4_data_gen.roleplay_dialogue_generator import load_topics_from_file
     topics = load_topics_from_file(topics_file)
     print(Fore.YELLOW + f"已加载 {len(topics)} 个主题")
     
