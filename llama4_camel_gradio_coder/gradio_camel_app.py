@@ -24,7 +24,7 @@ from camel.messages import BaseMessage
 # 创建模型
 model = ModelFactory.create(
     model_platform=ModelPlatformType.OPENROUTER,
-    model_type=ModelType.OPENROUTER_LLAMA_4_MAVERICK,
+    model_type=ModelType.OPENROUTER_LLAMA_4_MAVERICK_FREE,
     model_config_dict=OpenRouterConfig(temperature=0.2).as_dict(),
 )
 
@@ -47,8 +47,8 @@ def upload_knowledge_base(file):
         with open(file.name, "r", encoding="utf-8") as f:
             content = f.read()
         
-        # 创建用户消息
-        knowledge_msg = BaseMessage.make_user_message(
+        # 创建助手消息
+        knowledge_msg = BaseMessage.make_assistant_message(
             role_name="Knowledge Base",
             content=content,
         )
@@ -71,14 +71,14 @@ def chat_with_agent(message, history):
     if not message:
         return "", history
     
-    # 创建用户消息
-    user_msg = BaseMessage.make_user_message(
-        role_name="User",
-        content=message,
-    )
+    # # 创建用户消息
+    # user_msg = BaseMessage.make_user_message(
+    #     role_name="User",
+    #     content=message,
+    # )
     
-    # 记录用户消息
-    camel_agent.record_message(user_msg)
+    # # 记录用户消息
+    # camel_agent.record_message(user_msg)
     
     # 获取响应
     response = camel_agent.step(message)
@@ -86,14 +86,14 @@ def chat_with_agent(message, history):
     # 获取响应内容
     response_content = response.msgs[0].content
     
-    # 创建助手消息
-    assistant_msg = BaseMessage.make_assistant_message(
-        role_name="Assistant",
-        content=response_content,
-    )
+    # # 创建助手消息
+    # assistant_msg = BaseMessage.make_assistant_message(
+    #     role_name="Assistant",
+    #     content=response_content,
+    # )
     
-    # 记录助手消息
-    camel_agent.record_message(assistant_msg)
+    # # 记录助手消息
+    # camel_agent.record_message(assistant_msg)
     
     # 更新历史记录
     history.append((message, response_content))
