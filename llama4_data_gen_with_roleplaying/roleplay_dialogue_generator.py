@@ -91,12 +91,18 @@ def generate_dialogue(model, assistant_role, user_role, chat_turn_limit=50, cont
 
         # Reinitialize dialogue messages list
         dialogue["messages"] = []
+        
+        # Add initial user message, ensuring the conversation starts with a user message
+        initial_user_message = {
+            "role": "user",
+            "content": f"Instruction: {topic}\nInput: None"
+        }
+        dialogue["messages"].append(initial_user_message)
 
         n = 0
         print("[generate_dialogue] Preparing to initialize chat")
         input_msg = role_play_session.init_chat()
         print("[generate_dialogue] Chat initialization completed, starting dialogue loop")
-     
         
         while n < chat_turn_limit:
             n += 1
@@ -106,20 +112,20 @@ def generate_dialogue(model, assistant_role, user_role, chat_turn_limit=50, cont
                 assistant_response, user_response = role_play_session.step(input_msg)
                 print(f"[generate_dialogue] role_play_session.step called successfully")
 
-                # Record assistant response
-                if assistant_response.msg and assistant_response.msg.content:
+                # 记录助手的回复
+                if assistant_response.msgs and assistant_response.msgs[0].content:
                     dialogue["messages"].append({
                         "role": "assistant",
-                        "content": assistant_response.msg.content
+                        "content": assistant_response.msgs[0].content
                     })
                 else:
                     print(f"[generate_dialogue] Warning: Assistant response is empty or has no content")
                 
-                # Record user response
-                if user_response.msg and user_response.msg.content:
+                # Record user response (will be used as input in the next loop iteration)
+                if user_response.msgs and user_response.msgs[0].content:
                     dialogue["messages"].append({
                         "role": "user",
-                        "content": user_response.msg.content
+                        "content": user_response.msgs[0].content
                     })
                 else:
                     print(f"[generate_dialogue] Warning: User response is empty or has no content")
@@ -148,18 +154,18 @@ def generate_dialogue(model, assistant_role, user_role, chat_turn_limit=50, cont
                     break
 
                 print_text_animated(
-                    Fore.BLUE + f"AI User:\n\n{user_response.msg.content}\n"
+                    Fore.BLUE + f"AI User:\n\n{user_response.msgs[0].content}\n"
                 )
                 print_text_animated(
                     Fore.GREEN + "AI Assistant:\n\n"
-                    f"{assistant_response.msg.content}\n"
+                    f"{assistant_response.msgs[0].content}\n"
                 )
 
-                if "CAMEL_TASK_DONE" in user_response.msg.content:
+                if "CAMEL_TASK_DONE" in user_response.msgs[0].content:
                     print("[generate_dialogue] Detected CAMEL_TASK_DONE, ending dialogue")
                     break
 
-                input_msg = assistant_response.msg
+                input_msg = assistant_response.msgs[0]
             except Exception as step_e:
                 error_trace = traceback.format_exc()
                 print(f"[generate_dialogue] Error during dialogue generation (turn {n}): {str(step_e)}\n{error_trace}")
